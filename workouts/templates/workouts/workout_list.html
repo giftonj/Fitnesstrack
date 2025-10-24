@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Workout History</title>
+    <style>
+        body { font-family: sans-serif; }
+        .workout { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        ul { padding-left: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Workout History 📜</h1>
+
+    <a href="{% url 'add_workout' %}">Add New Workout</a>
+    <hr>
+
+    {% for workout in workouts %}
+        <div class="workout">
+            <h2>Workout on {{ workout.date }}</h2>
+
+            <ul>
+            {% for exercise in workout.exercises.all %}
+                <li>{{ exercise.name }} - {{ exercise.sets }} sets of {{ exercise.reps }} reps</li>
+            {% empty %}
+                <li>No exercises recorded for this session.</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% empty %}
+        <p>You haven't logged any workouts yet.</p>
+    {% endfor %}
+</body>
+</html>
