@@ -13,6 +13,8 @@
     <h1>Workout History 📜</h1>
 
     <a href="{% url 'add_workout' %}">Add New Workout</a>
+    <span> | </span>
+    <a href="{% url 'logout' %}">Logout</a>
     <hr>
 
     {% for workout in workouts %}

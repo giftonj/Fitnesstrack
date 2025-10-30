@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Workout(models.Model):
+    date = models.DateField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):

@@ -4,35 +4,81 @@
     <meta charset="UTF-8">
     <title>Add New Workout</title>
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: auto; padding: 20px;}
+        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px;}
         form { display: flex; flex-direction: column; gap: 15px; }
         input { padding: 8px; }
+        .exercise-form { border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        h3 { margin-top: 0; }
         button { padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
     <h1>Add New Workout 💪</h1>
+    
+    <form method="post">
+        {% csrf_token %}
 
-    <form action="{% url 'add_workout' %}" method="post">
-        {% csrf_token %} 
         <label for="date">Workout Date:</label>
         <input type="date" id="date" name="date" required>
-
+        
         <hr>
-        <h3>Add an Exercise</h3>
+        <h2>Exercises</h2>
+       
+        {{ formset.management_form }}  
 
-        <label for="exercise_name">Exercise Name:</label>
-        <input type="text" id="exercise_name" name="exercise_name" placeholder="e.g., Push-ups" required>
+        <div id="exercise-form-list">
+        {% for form in formset %}
+            <div class="exercise-form">
+                {{ form.as_p }}
+                {% if form.instance.pk and formset.can_delete %}
+                    <label>Delete:</label> {{ form.DELETE }}
+                {% endif %}
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
 
-        <label for="sets">Sets:</label>
-        <input type="number" id="sets" name="sets" placeholder="e.g., 3" required>
+    <div id="empty-form" style="display:none;">
+        <div class="exercise-form">
+            {{ formset.empty_form.as_p }}
+            <hr>
+        </div>
+    </div>
 
-        <label for="reps">Reps:</label>
-        <input type="number" id="reps" name="reps" placeholder="e.g., 10" required>
-
-        <button type="submit">Save Workout</button>
+    <button type="button" id="add-form-btn">➕ Add Another Exercise</button>
+    <button type="submit">Save Workout</button>
     </form>
 
     <a href="{% url 'workout_list' %}">Back to History</a>
+
+    <script>
+        // Get the button for adding new forms
+        const addFormButton = document.getElementById('add-form-btn');
+
+        // Get the container where new forms will be inserted
+        const formList = document.getElementById('exercise-form-list');
+
+        // Get the hidden empty form template
+        const emptyForm = document.getElementById('empty-form').innerHTML;
+
+        // Get the management form's input for TOTAL_FORMS
+        const totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
+
+        addFormButton.addEventListener('click', function() {
+            // Get the current number of forms
+            let currentFormCount = formList.children.length;
+
+            // Create the new form HTML by replacing the prefix
+            // Django's empty_form uses '__prefix__' as a placeholder.
+            // We replace it with the current form count to give it a unique index.
+            let newFormHtml = emptyForm.replace(/__prefix__/g, currentFormCount);
+
+            // Add the new form to the list
+            formList.insertAdjacentHTML('beforeend', newFormHtml);
+
+            // Update the total form count in the management form
+            totalFormsInput.value = currentFormCount + 1;
+        });
+    </script>
 </body>
 </html>
