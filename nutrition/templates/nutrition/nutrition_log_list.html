@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nutrition Logs</title>
+    <style>
+        body { font-family: sans-serif; }
+        .nutrition-log { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        ul { padding-left: 20px; }
+        .nutrient-summary { background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        .micronutrients { font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Nutrition Logs 🥗</h1>
+
+    <a href="{% url 'add_nutrition_log' %}">Add New Nutrition Log</a>
+    <span> | </span>
+    <a href="{% url 'meal_suggestions' %}">Meal Suggestions</a>
+    <span> | </span>
+    <a href="{% url 'barcode_scanner' %}">Barcode Scanner</a>
+    <span> | </span>
+    <a href="{% url 'workout_list' %}">Workouts</a>
+    <span> | </span>
+    <a href="{% url 'logout' %}">Logout</a>
+    <hr>
+
+    {% for log in nutrition_logs %}
+        <div class="nutrition-log">
+            <h2>Nutrition Log - {{ log.date }}</h2>
+
+            <ul>
+            {% for entry in log.food_entries.all %}
+                <li>
+                    <strong>{{ entry.name }}</strong>
+                    {% if entry.serving_size %}({{ entry.serving_size }}){% endif %}
+                    - {{ entry.calories }} cal
+                    (P: {{ entry.protein }}g, C: {{ entry.carbohydrates }}g, F: {{ entry.fats }}g)
+                    {% if entry.barcode %}
+                        <br><span style="font-size: 0.8em; color: #666;">📊 Barcode: {{ entry.barcode }}</span>
+                    {% endif %}
+                    <div class="micronutrients">
+                        Micronutrients: 
+                        Vit D: {{ entry.vitamin_d }}mcg, 
+                        B12: {{ entry.vitamin_b12 }}mcg, 
+                        Iron: {{ entry.iron }}mg, 
+                        Calcium: {{ entry.calcium }}mg, 
+                        Omega-3: {{ entry.omega3 }}g
+                    </div>
+                </li>
+            {% empty %}
+                <li>No food entries recorded for this log.</li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% empty %}
+        <p>You haven't logged any nutrition data yet.</p>
+    {% endfor %}
+</body>
+</html>

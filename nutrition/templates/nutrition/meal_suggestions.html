@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Suggestions</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: auto; padding: 20px;}
+        .summary-box { background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .gap-indicator { color: #ff6b6b; font-weight: bold; }
+        .suggestion-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: white; }
+        .suggestion-card h3 { margin-top: 0; color: #2c3e50; }
+        .nutrient-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .tag { background-color: #4CAF50; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.85em; }
+        .macros { color: #666; font-size: 0.95em; }
+        .no-gaps { background-color: #d4edda; padding: 15px; border-radius: 5px; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>Meal Suggestions 🍴</h1>
+
+    <div class="summary-box">
+        <h2>Today's Nutritional Summary</h2>
+        
+        {% if gaps %}
+            <p>Based on your nutrition intake today, you may be low in the following nutrients:</p>
+            <ul>
+                {% if gaps.vitamin_d %}<li class="gap-indicator">Vitamin D (RDV: {{ rdv.vitamin_d }}mcg, Consumed: {{ totals.total_vitamin_d|default:"0" }}mcg)</li>{% endif %}
+                {% if gaps.vitamin_b12 %}<li class="gap-indicator">Vitamin B12 (RDV: {{ rdv.vitamin_b12 }}mcg, Consumed: {{ totals.total_vitamin_b12|default:"0" }}mcg)</li>{% endif %}
+                {% if gaps.iron %}<li class="gap-indicator">Iron (RDV: {{ rdv.iron }}mg, Consumed: {{ totals.total_iron|default:"0" }}mg)</li>{% endif %}
+                {% if gaps.calcium %}<li class="gap-indicator">Calcium (RDV: {{ rdv.calcium }}mg, Consumed: {{ totals.total_calcium|default:"0" }}mg)</li>{% endif %}
+                {% if gaps.omega3 %}<li class="gap-indicator">Omega-3 (RDV: {{ rdv.omega3 }}g, Consumed: {{ totals.total_omega3|default:"0" }}g)</li>{% endif %}
+            </ul>
+            <p><strong>💡 Suggested meals below are rich in these nutrients</strong></p>
+        {% else %}
+            <div class="no-gaps">
+                <strong>✓ Great job!</strong> You're meeting your nutritional goals for today. 
+                Here are some balanced meal options:
+            </div>
+        {% endif %}
+    </div>
+
+    <h2>Recommended Meals</h2>
+
+    {% for suggestion in suggestions %}
+        <div class="suggestion-card">
+            <h3>{{ suggestion.name }} <small>({{ suggestion.get_meal_type_display }})</small></h3>
+            <p>{{ suggestion.description }}</p>
+            
+            <div class="macros">
+                📊 <strong>Nutrition:</strong> 
+                {{ suggestion.calories }} cal | 
+                Protein: {{ suggestion.protein }}g | 
+                Carbs: {{ suggestion.carbohydrates }}g | 
+                Fat: {{ suggestion.fats }}g
+            </div>
+            
+            <div class="nutrient-tags">
+                {% if suggestion.high_in_vitamin_d %}<span class="tag">Rich in Vitamin D</span>{% endif %}
+                {% if suggestion.high_in_vitamin_b12 %}<span class="tag">Rich in B12</span>{% endif %}
+                {% if suggestion.high_in_iron %}<span class="tag">Rich in Iron</span>{% endif %}
+                {% if suggestion.high_in_calcium %}<span class="tag">Rich in Calcium</span>{% endif %}
+                {% if suggestion.high_in_omega3 %}<span class="tag">Rich in Omega-3</span>{% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p>No meal suggestions available at this time. Try logging some nutrition data first, or check back later for pre-defined meal options.</p>
+    {% endfor %}
+
+    <hr>
+    <a href="{% url 'nutrition_log_list' %}">Back to Nutrition Logs</a>
+    <span> | </span>
+    <a href="{% url 'add_nutrition_log' %}">Add Food Entry</a>
+</body>
+</html>

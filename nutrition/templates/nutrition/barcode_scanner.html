@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Barcode Scanner</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px;}
+        .info-box { border: 1px solid #ddd; padding: 20px; border-radius: 5px; background-color: #f9f9f9; }
+        .database-list { list-style: none; padding-left: 0; }
+        .database-list li { padding: 10px; background-color: white; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        .feature-note { background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Barcode Scanner 📱</h1>
+
+    <div class="info-box">
+        <h2>{{ message }}</h2>
+        
+        <p>This feature enables quick food entry by scanning product barcodes. When integrated with a food database, 
+        it will automatically populate nutritional information including macros and micronutrients.</p>
+        
+        <h3>Supported Food Databases:</h3>
+        <ul class="database-list">
+            {% for database in supported_databases %}
+                <li>✓ {{ database }}</li>
+            {% endfor %}
+        </ul>
+        
+        <div class="feature-note">
+            <strong>📝 Integration Notes:</strong>
+            <ul>
+                <li><strong>Open Food Facts</strong>: Free, open database with extensive product coverage worldwide</li>
+                <li><strong>USDA FoodData Central</strong>: Comprehensive U.S. government nutrition database</li>
+                <li><strong>Nutritionix API</strong>: Commercial API with extensive branded food database</li>
+            </ul>
+            <p>Future implementation will include camera-based barcode scanning and automatic lookup.</p>
+        </div>
+    </div>
+
+    <hr>
+    <a href="{% url 'nutrition_log_list' %}">Back to Nutrition Logs</a>
+    <span> | </span>
+    <a href="{% url 'add_nutrition_log' %}">Add Food Manually</a>
+</body>
+</html>
