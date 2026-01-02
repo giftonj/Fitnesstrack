@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Nutrition Log</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px;}
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input { padding: 8px; }
+        .food-entry-form { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+        .food-entry-form h3 { margin-top: 0; }
+        .form-section { margin-bottom: 15px; }
+        .form-section h4 { margin-bottom: 5px; color: #555; }
+        button { padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Add Nutrition Log 🍽️</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        
+        <hr>
+        <h2>Food Entries</h2>
+       
+        {{ formset.management_form }}  
+
+        <div id="food-entry-form-list">
+        {% for form in formset %}
+            <div class="food-entry-form">
+                <h3>Food Entry {{ forloop.counter }}</h3>
+                
+                <div class="form-section">
+                    <label>{{ form.name.label }}:</label>
+                    {{ form.name }}
+                </div>
+                
+                <div class="form-section">
+                    <label>{{ form.barcode.label }}:</label>
+                    {{ form.barcode }}
+                    <small style="color: #666;">💡 Scan barcode or enter manually for product lookup</small>
+                </div>
+                
+                <div class="form-section">
+                    <label>{{ form.serving_size.label }}:</label>
+                    {{ form.serving_size }}
+                </div>
+                
+                <div class="form-section">
+                    <h4>Macronutrients</h4>
+                    <div class="field-group">
+                        <div>
+                            <label>{{ form.calories.label }}:</label>
+                            {{ form.calories }}
+                        </div>
+                        <div>
+                            <label>{{ form.protein.label }}:</label>
+                            {{ form.protein }}
+                        </div>
+                        <div>
+                            <label>{{ form.carbohydrates.label }}:</label>
+                            {{ form.carbohydrates }}
+                        </div>
+                        <div>
+                            <label>{{ form.fats.label }}:</label>
+                            {{ form.fats }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h4>Micronutrients</h4>
+                    <div class="field-group">
+                        <div>
+                            <label>{{ form.vitamin_d.label }}:</label>
+                            {{ form.vitamin_d }}
+                        </div>
+                        <div>
+                            <label>{{ form.vitamin_b12.label }}:</label>
+                            {{ form.vitamin_b12 }}
+                        </div>
+                        <div>
+                            <label>{{ form.iron.label }}:</label>
+                            {{ form.iron }}
+                        </div>
+                        <div>
+                            <label>{{ form.calcium.label }}:</label>
+                            {{ form.calcium }}
+                        </div>
+                        <div>
+                            <label>{{ form.omega3.label }}:</label>
+                            {{ form.omega3 }}
+                        </div>
+                    </div>
+                </div>
+                
+                {% if form.instance.pk and formset.can_delete %}
+                    <label>Delete:</label> {{ form.DELETE }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="empty-form" style="display:none;">
+        <div class="food-entry-form">
+            {{ formset.empty_form.as_p }}
+        </div>
+    </div>
+
+    <button type="button" id="add-form-btn">➕ Add Another Food Entry</button>
+    <button type="submit">Save Nutrition Log</button>
+    </form>
+
+    <a href="{% url 'nutrition_log_list' %}">Back to Nutrition Logs</a>
+
+    <script>
+        const addFormButton = document.getElementById('add-form-btn');
+        const formList = document.getElementById('food-entry-form-list');
+        const emptyForm = document.getElementById('empty-form').innerHTML;
+        const totalFormsInput = document.getElementById('id_form-TOTAL_FORMS');
+
+        addFormButton.addEventListener('click', function() {
+            let currentFormCount = formList.children.length;
+            let newFormHtml = emptyForm.replace(/__prefix__/g, currentFormCount);
+            formList.insertAdjacentHTML('beforeend', newFormHtml);
+            totalFormsInput.value = currentFormCount + 1;
+        });
+    </script>
+</body>
+</html>

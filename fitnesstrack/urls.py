@@ -25,5 +25,6 @@ urlpatterns = [
     # CORRECT
     path('', RedirectView.as_view(url='/auth/login/', permanent=True)),
     path('auth/', include('login.urls')),
-    path('workouts/', include('workouts.urls'))
+    path('workouts/', include('workouts.urls')),
+    path('nutrition/', include('nutrition.urls')),
 ]
